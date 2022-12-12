@@ -1,0 +1,86 @@
+<h5 id="description">Description</h5>
+<p>During previous stages, we have created a program that can find file duplicates. In this stage, we need to add the ability to delete files and print the information about them.</p>
+<h5 id="objectives">Objectives</h5>
+<p>Keep the functionality from the previous stages. To complete this stage, your program should do the following:</p>
+<ol>
+<li>Ask a user whether they want to delete files. Expect either <code class="java">yes</code> or <code class="java">no</code> as the answer. Print <code class="java">Wrong option</code> if it receives any other input. Repeat until a user provides a valid answer. If <code class="java">yes</code>, read what files a user wants to delete and then delete them. Otherwise, abort the program;</li>
+<li>Read a sequence of files that a user wants to delete and then delete them. Input should contain only file numbers separated by spaces. Print <code class="java">Wrong format</code> if it receives empty string or any other input. Repeat until a user provides a valid answer;</li>
+<li>Print the total freed up space in bytes.</li>
+</ol>
+<p>Please note: you should use full path to file <strong>from root directory</strong> when printing or reading.</p>
+<h5 id="examples">Examples</h5>
+<p>The greater-than symbol followed by a space (<code class="java">&gt; </code>) represents the user input. Note that it's not part of the input.</p>
+<p><strong>Example 1:</strong></p>
+<p>Suppose, you have the following set of files and folders:</p>
+<pre><code class="language-no-highlight">+---[root_folder]
+    +---gordon_ramsay_chicken_breast.avi /4590560 bytes
+    +---poker_face.mp3 /5550640 bytes
+    +---poker_face_copy.mp3 /5550640 bytes
+    +---[audio]
+    |   |
+    |   +---voice.mp3 /2319746 bytes
+    |   +---sia_snowman.mp3 /4590560 bytes
+    |   +---nea_some_say.mp3 /3232056 bytes
+    |   +---[classic]
+    |   |   |
+    |   |   +---unknown.mp3 /3422208 bytes
+    |   |   +---vivaldi_four_seasons_winter.mp3 /9158144 bytes
+    |   |   +---chopin_waltz7_op64_no2.mp3 /9765504 bytes
+    |   +---[rock]
+    |       |
+    |       +---smells_like_teen_spirit.mp3 /4590560 bytes
+    |       +---numb.mp3 /5786312 bytes
+    +---[masterpiece]
+        |
+        +---rick_astley_never_gonna_give_you_up.mp3 /3422208 bytes</code></pre>
+<p>Program output:</p>
+<pre><code class="language-no-highlight">&gt; python handler.py root_folder
+
+Enter file format:
+&gt;
+
+Size sorting options:
+1. Descending
+2. Ascending
+
+Enter a sorting option:
+&gt; 1
+
+5550640 bytes
+root_folder/poker_face.mp3
+root_folder/poker_face_copy.mp3
+
+4590560 bytes
+root_folder/gordon_ramsay_chicken_breast.avi
+root_folder/audio/sia_snowman.mp3
+root_folder/audio/rock/smells_like_teen_spirit.mp3
+
+3422208 bytes
+root_folder/audio/classic/unknown.mp3
+root_folder/masterpiece/rick_astley_never_gonna_give_you_up.mp3
+
+Check for duplicates?
+&gt; yes
+
+5550640 bytes
+Hash: 909ba4ad2bda46b10aac3c5b7f01abd5
+1. root_folder/poker_face.mp3
+2. root_folder/poker_face_copy.mp3
+
+3422208 bytes
+Hash: a7f5f35426b927411fc9231b56382173
+3. root_folder/audio/classic/unknown.mp3
+4. root_folder/masterpiece/rick_astley_never_gonna_give_you_up.mp3
+
+Delete files?
+&gt; yes
+
+Enter file numbers to delete:
+&gt; 1 2 5
+
+Wrong format
+
+Enter file numbers to delete:
+&gt; 1 2 4
+
+Total freed up space: 14523488 bytes</code></pre>

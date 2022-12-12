@@ -1,0 +1,7 @@
+type: framework
+content:
+- Here come the files
+- How much does it weigh
+- What's that hash about
+- Delete them all
+current_task: 0

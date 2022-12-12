@@ -1,0 +1,142 @@
+<h2>Argparse module</h2>
+<html><body><p>If you're writing a user-friendly program, one way to make it more universal is to use the command line and let users specify all the necessary parameters and their values themselves. Thus you can design a program capable of taking different numbers (a calculator, for example) or a path to a file, as is often required. Then the user won't need to go inside the script trying to find where and what should be replaced.</p>
+<p>The <code class="language-python">argparse</code> is one of the modules that lets you do that. It allows you to pass the arguments through the command line and also assign names to them, use them as “flags”, automatically generate messages for users, and do a lot of other cool things we will get to a bit later.</p>
+<p>We will write a script called <code class="language-python">recipe_book.py</code> as an example that takes up to five ingredients and prints a recipe of a dish you can cook with the provided ingredients. </p>
+<h5 id="getting-started-with-argparse">Getting started with argparse</h5>
+<p>The first thing is to import the module:</p>
+<pre><code class="language-python">import argparse</code></pre>
+<p>The next step is to create an <code class="language-python">ArgumentParser</code> object which will store all the information about the arguments:</p>
+<pre><code class="language-python">parser = argparse.ArgumentParser(description="This program prints recipes \
+consisting of the ingredients you provide.")</code></pre>
+<p>The <code class="language-python">ArgumentParser</code> is a class. In Python, classes are used to define the data and the behaviors of similar objects. The <code class="language-python">ArgumentParser</code> has quite a number of parameters that you can specify, but we only invoked <code class="language-python">description</code> which is quite handy in order to explain to a user what your program is for in general. Now let's add some arguments.</p>
+<h5 id="adding-arguments">Adding arguments</h5>
+<p>To do that, we will use the <code class="language-python">add_argument()</code> method:</p>
+<pre><code class="language-python">parser.add_argument("-i1", "--ingredient_1")  # optional argument
+                                              # or
+parser.add_argument("ingredient_1")           # positional argument</code></pre>
+<p>We also need to note the difference between the optional and the positional arguments. When parsing, if an argument has a dash <code class="language-python">- </code>or a double dash <code class="language-python">--</code> prefix, it'll be treated as optional. Let's take a closer look at the first line of the code in the example above. With <em>optional</em> arguments, traditionally, a single dash <code class="language-python">-</code> denotes a short version of a name (usually consisting of only one letter), while a double dash <code class="language-python">--</code> is used for a full argument name. When specifying this argument from the command line, you can use either of these variants. Since <em>positional</em> arguments are used without a prefix before them, they can have only one name.</p>
+<p>The <code class="language-python">add_argument()</code> has a lot of useful parameters, but we are going to look at the most commonly-used ones. For example, the parameter “action” is responsible for what should be done with a command-line argument. By default, it just stores the value passed to the argument, though it's not the only option.</p>
+<pre><code class="language-python">parser.add_argument("--salt", action="store_true")</code></pre>
+<p>Since pretty much everybody has some salt in their kitchen, we'll assume that our users always have salt on hand. So, instead of making users specify salt as one of the numbered ingredients, we'll let them toggle its presence in the recipe with a simple flag. In the example above, we have done so by setting the action to the “<samp>store_true</samp>”. It is used to assign boolean values to the corresponding arguments. The <code class="language-python">salt</code> value will be <code class="language-python">False</code> by default but if the user lists <code class="language-python">--salt</code> among the arguments, the value will be changed to <code class="language-python">True</code>. There's also an opposite option, <code class="language-python"><samp>store_false</samp></code>: the argument's default value will be <code class="language-python">True</code>, but it will be made <code class="language-python">False</code> if the argument is listed.</p>
+<p>For action = "store_false": the default value is True. For action = "store_true": the default value is False.</p>
+<p>The same can be achieved by specifying the <code class="language-python">default</code> parameter:</p>
+<pre><code class="language-python">parser.add_argument("--pepper", default=False)</code></pre>
+<p>This time the argument isn't used as a flag any more, so, if you'd like to change the value, you will have to define it in the command line explicitly: <code class="language-python">--pepper "True"</code>.</p>
+<p>Finally, since we're only at the beginning of the development process of our program, it might be useful to limit the choice of each ingredient to only those used in our recipes. This can be done with the <code class="language-python">choices</code> parameter that will show the acceptable values for a particular argument:</p>
+<pre><code class="language-python">parser.add_argument("-i2", "--ingredient_2",
+                    choices=["pasta", "rice", "potato", "onion",
+                             "garlic", "carrot", "soy_sauce", "tomato_sauce"],
+                    help="You need to choose only one ingredient from the list.")</code></pre>
+<p>Another useful parameter you see here is <code class="language-python">help</code>. It contains a brief description of an argument and also allows you to guide a user in their work with a script.</p>
+<h5 id="parsing-arguments">Parsing arguments</h5>
+<p>The <code class="language-python">parse_args()</code> method is used for reading argument strings from the command line:</p>
+<pre><code class="language-python">args = parser.parse_args()</code></pre>
+<p>Now we can access the values specified by a user as attributes of the <code class="language-python">args</code>. The long versions are used as attribute names:</p>
+<pre><code class="language-python">print(args.ingredient_2)  # onion 
+# (the value was chosen by a user from the given options)</code></pre>
+<p> </p>
+<p>Note that we can't use short versions of arguments: for example, <code class="language-python">args.i2</code> <strong>will not</strong> work.</p>
+<p> </p>
+<p>In case a user didn't specify an optional argument in the command line, the value is set to<code class="language-python">None</code> by default:</p>
+<pre><code class="language-python">print(args.ingredient_3)  # None
+# (the value wasn't provided by a user)</code></pre>
+<p>So far, the code of our program in the “recipe_book.py” module looks as follows:</p>
+<pre><code class="language-python">import argparse
+
+
+parser = argparse.ArgumentParser(description="This program prints recipes \
+consisting of the ingredients you provide.")
+
+parser.add_argument("-i1", "--ingredient_1", choices=["pasta", "rice", "potato",
+                    "onion", "garlic", "carrot", "soy_sauce", "tomato_sauce"],
+                    help="You need to choose only one ingredient from the list.")
+parser.add_argument("-i2", "--ingredient_2", choices=["pasta", "rice", "potato",
+                    "onion", "garlic", "carrot", "soy_sauce", "tomato_sauce"],
+                    help="You need to choose only one ingredient from the list.")
+parser.add_argument("-i3", "--ingredient_3", choices=["pasta", "rice", "potato",
+                    "onion", "garlic", "carrot", "soy_sauce", "tomato_sauce"],
+                    help="You need to choose only one ingredient from the list.")
+parser.add_argument("-i4", "--ingredient_4", choices=["pasta", "rice", "potato",
+                    "onion", "garlic", "carrot", "soy_sauce", "tomato_sauce"],
+                    help="You need to choose only one ingredient from the list.")
+parser.add_argument("-i5", "--ingredient_5", choices=["pasta", "rice", "potato",
+                    "onion", "garlic", "carrot", "soy_sauce", "tomato_sauce"],
+                    help="You need to choose only one ingredient from the list.")
+
+parser.add_argument("--salt", action="store_true",
+                    help="Specify if you'd like to use salt in your recipe.")
+parser.add_argument("--pepper", default="False",
+                    help="Change to 'True' if you'd like to use pepper in your recipe.")
+
+args = parser.parse_args()
+
+ingredients = [args.ingredient_1, args.ingredient_2, args.ingredient_3,
+               args.ingredient_4, args.ingredient_5]
+if args.salt:
+    ingredients.append("salt")
+if args.pepper == "True":
+    ingredients.append("pepper")
+
+print(f"The ingredients you provided are: {ingredients}")
+
+
+def find_a_recipe(ingredients):
+    ...
+    # processes the input and returns a recipe depending on the provided ingredients</code></pre>
+<h5 id="how-do-you-actually-use-that-in-the-command-line">How do you actually use that in the command line?</h5>
+<p>Now let's see what it looks like from the user's perspective. Here's a sample call of our program from the command line:</p>
+<pre><code class="language-bash">python recipe_book.py -i1 rice -i2 onion -i3 garlic -i4 carrot -i5 tomato_sauce --salt
+# The ingredients you provided are: ['rice', 'onion', 'garlic', 'carrot', 'tomato_sauce', 'salt']
+# &lt;The description of the available recipe&gt;</code></pre>
+<p> </p>
+<p>What's important to note here is that the format <code class="language-python">argument value</code> and <code class="language-python">argument=value</code> are equivalent:</p>
+<p> </p>
+<pre><code class="language-bash">python recipe_book.py -i1=pasta -i2=garlic -i3=tomato_sauce --salt --pepper="True"
+# The ingredients you provided are: ['pasta', 'garlic', 'tomato_sauce', None, None, 'salt', 'pepper']
+# &lt;The description of the available recipe&gt;</code></pre>
+<p>However, if a user tries to use an option which is not given in the <code class="language-python">choices</code> parameter, it will raise an error:</p>
+<pre><code class="language-bash">python recipe_book.py -i1 bread -i2 onion -i3 garlic -i4 carrot -i5 tomato_sauce --salt
+# usage: recipe_book.py [-h]
+#                       [-i1 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}]
+#                       [-i2 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}]
+#                       [-i3 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}]
+#                       [-i4 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}]
+#                       [-i5 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}]
+#                       [--salt] [--pepper]
+# recipe_book.py: error: argument -i1/--ingredient_1: invalid choice: 'bread'
+# (choose from 'pasta', 'rice', 'potato', 'onion', 'garlic', 'carrot', 'soy_sauce', 'tomato_sauce')</code></pre>
+<p>Note that the first thing displayed is the 'usage' of our program. We did not specify it ourselves when creating the argument parser, so it was generated automatically from the parser's arguments. In the 'usage', we can see that the value 'bread' is not supported by our program, and the error message also explains this fact.</p>
+<p>Remember the <code class="language-python">help</code> parameter we discussed earlier? When a user specifies <code class="language-python">--help</code> or <code class="language-python">-h</code> as an argument in the command line, the description for each argument is displayed:</p>
+<pre><code class="language-bash">python recipe_book.py --help
+# usage: recipe_book.py [-h]
+#                       [-i1 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}]
+#                       [-i2 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}]
+#                       [-i3 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}]
+#                       [-i4 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}]
+#                       [-i5 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}]
+#                       [--salt] [--pepper]
+# 
+# This program prints recipes consisting of the ingredients you provide.
+# 
+# optional arguments:
+#   -h, --help            show this help message and exit
+#   -i1 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}, --ingredient_1
+# {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}
+#                         You need to choose only one ingredient from the list.
+#   -i2 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}, --ingredient_2
+# {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}
+#                         You need to choose only one ingredient from the list.
+#   -i3 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}, --ingredient_3
+# {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}
+#                         You need to choose only one ingredient from the list.
+#   -i4 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}, --ingredient_4
+# {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}
+#                         You need to choose only one ingredient from the list.
+#   -i5 {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}, --ingredient_5
+# {pasta,rice,potato,onion,garlic,carrot,soy_sauce,tomato_sauce}
+#                         You need to choose only one ingredient from the list.
+#   --salt                Specify if you'd like to use salt in your recipe.
+#   --pepper              Change to 'True' if you'd like to use pepper in your recipe.</code></pre>
+<p>Again, first we see the 'usage' of our program, then, there's the description we wrote, and, finally, the list of all arguments.</p>
+<h5 id="summary">Summary</h5>
+<p>In this topic, we briefly familiarized ourselves with Python <code class="language-python">argparse</code> module. There are three main steps to get the job done: first, create the <code class="language-python">ArgumentParser</code> object; then, add arguments with <code class="language-python">add_argument()</code> method; finally, parse them with the <code class="language-python">parse_args()</code> method and use them in your program. Since what we discussed here is more of a review than a full description, it's definitely worth reading the argparse section in the <a href="https://docs.python.org/3/library/argparse.html" rel="noopener noreferrer nofollow" target="_blank">official docs</a> for more details, especially to learn about different parameter options you can use in your program.</p></body></html>

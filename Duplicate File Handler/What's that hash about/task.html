@@ -1,0 +1,95 @@
+<h5 id="theory">Theory</h5>
+<p>Now we have a list of files of the same size. The next step is to check the files with the help of the <a href="https://docs.python.org/3/library/hashlib.html" rel="noopener noreferrer nofollow" target="_blank">Hashlib module</a>. Why do we need to use hash here? The answer is very simple — it's convenient! As you may know, a hash function can take <strong>any</strong> input of <strong>any length</strong>.<strong> </strong>It produces several strings as output.</p>
+<p>A hash function has the following main features:</p>
+<ul>
+<li>easy to compute</li>
+<li>unique output</li>
+<li>small and fixable output</li>
+</ul>
+<p>So, a file type or size plays a minor role. We can get a hash of any file and compare it against a hash of another file.<br/>
+We will work with an MD5 hash function of the <a href="https://docs.python.org/3/library/hashlib.html" rel="noopener noreferrer nofollow" target="_blank">Hashlib module</a>. Take a look at some useful functions:</p>
+<ul>
+<li><code class="java">md5()</code> creates a hash object</li>
+<li><code class="java">update()</code> updates a hash object</li>
+<li><code class="java">hexdigest()</code> gets the HEX digest</li>
+</ul>
+<h5 id="description">Description</h5>
+<p>In this stage, we need to get hashes of files of the same size and check whether they are the same file. Remember that <strong>hash works with byte-like objects only</strong>,<strong><span style="color: #ff4363;"> </span></strong>so pay attention to the file read mode (the <code class="java">rb</code> mode).</p>
+<h5 id="objectives">Objectives</h5>
+<p>Keep the functionality from the previous stages. To complete the stage, your program should:</p>
+<ol>
+<li>Ask for duplicates check;</li>
+<li>Read user input: <code class="java">yes</code> or <code class="java">no</code> . Print <code class="java">Wrong option</code> if any other input is received. Repeat until a user provides a valid answer. If the input is <code class="java">yes</code>, get the hash of files of the same size; group the files of the same hash, assign numbers to these files. Otherwise, the program should stop the operation;</li>
+<li>Assign numbers to lines with files after hashing. You should assign numbers to files based on the total number of files in output.  It is needed for the purpose of the next stage.</li>
+<li>Print the information about the duplicate files along with their hashes (see example). If the files don't have duplicates, you don't have to print the information about them. Sort the group of files by size as in the previous stage. You don't have to sort hash subgroups.</li>
+</ol>
+<p>Please note: you should use full path to file <strong>from root directory</strong> when printing or reading.</p>
+<h5 id="examples">Examples</h5>
+<p>The greater-than symbol followed by a space (<code class="java">&gt; </code>) represents the user input. Note that it's not part of the input.</p>
+<p>Suppose you have the following set of files and folders:</p>
+<pre><code class="language-no-highlight">+---[root_folder]
+    +---gordon_ramsay_chicken_breast.avi /4590560 bytes
+    +---poker_face.mp3 /5550640 bytes
+    +---poker_face_copy.mp3 /5550640 bytes
+    +---[audio]
+    |   |
+    |   +---voice.mp3 /2319746 bytes
+    |   +---sia_snowman.mp3 /4590560 bytes
+    |   +---nea_some_say.mp3 /3232056 bytes
+    |   +---[classic]
+    |   |   |
+    |   |   +---unknown.mp3 /3422208 bytes
+    |   |   +---vivaldi_four_seasons_winter.mp3 /9158144 bytes
+    |   |   +---chopin_waltz7_op64_no2.mp3 /9765504 bytes
+    |   +---[rock]
+    |       |
+    |       +---smells_like_teen_spirit.mp3 /4590560 bytes
+    |       +---numb.mp3 /5786312 bytes
+    +---[masterpiece]
+        |
+        +---rick_astley_never_gonna_give_you_up.mp3 /3422208 bytes
+        +---the_magic_flute_queen_of_the_night_aria.mp3 /3422208 bytes
+        +---the_magic_flute_queen_of_the_night_aria_copy.mp3 /3422208 bytes</code></pre>
+<p>Program output:</p>
+<pre><code class="language-no-highlight">&gt; python handler.py root_folder
+
+Enter file format:
+&gt;
+
+Size sorting options:
+1. Descending
+2. Ascending
+
+Enter a sorting option:
+&gt; 1
+
+5550640 bytes
+root_folder/poker_face.mp3
+root_folder/poker_face_copy.mp3
+
+4590560 bytes
+root_folder/gordon_ramsay_chicken_breast.avi
+root_folder/audio/sia_snowman.mp3
+root_folder/audio/rock/smells_like_teen_spirit.mp3
+
+3422208 bytes
+root_folder/audio/classic/unknown.mp3
+root_folder/masterpiece/rick_astley_never_gonna_give_you_up.mp3
+root_folder/masterpiece/the_magic_flute_queen_of_the_night_aria.mp3
+root_folder/masterpiece/the_magic_flute_queen_of_the_night_aria_copy.mp3
+
+Check for duplicates?
+&gt; yes
+
+5550640 bytes
+Hash: 909ba4ad2bda46b10aac3c5b7f01abd5
+1. root_folder/poker_face.mp3
+2. root_folder/poker_face_copy.mp3
+
+3422208 bytes
+Hash: a7f5f35426b927411fc9231b56382173
+3. root_folder/audio/classic/unknown.mp3
+4. root_folder/masterpiece/rick_astley_never_gonna_give_you_up.mp3
+Hash: b6d767d2f8ed5d21a44b0e5886680cb9
+5. root_folder/masterpiece/the_magic_flute_queen_of_the_night_aria.mp3
+6. root_folder/masterpiece/the_magic_flute_queen_of_the_night_aria_copy.mp3</code></pre>

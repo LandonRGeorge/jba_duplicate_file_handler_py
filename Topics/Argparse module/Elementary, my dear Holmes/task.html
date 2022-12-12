@@ -1,0 +1,30 @@
+<html><body><p> </p>
+<p>Please note: for now, when you go to the tab IDE, you can solve this problem only via Pycharm. We are sorry for the inconvenience, we will fix this as soon as we can. If you prefer to solve the problem via a different IDE, you should open it manually and then copy the solution to the website.</p>
+<p> </p>
+<p>Professor Moriarty is causing trouble again! Mary managed to get a file with a piece of his plan, but it's encoded. Before she could decode it, Moriarty had taken her hostage and Dr. Watson went to the rescue.</p>
+<p>Holmes anticipated that and found a simple Caesar cipher decoder on <a href="https://stackoverflow.com/" rel="noopener noreferrer nofollow" target="_blank">Stack Overflow</a> to deal with it himself. Initially, the file Holmes got from Mary was called "13.txt", so he presupposed that this might be the offset <code class="language-python">n</code>. Check this theory but keep in mind that for decoding the offset has to be taken with a minus:</p>
+<pre><code class="language-python">def decode_Caesar_cipher(s, n):
+    alpha = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',.?!"
+    s = s.strip()
+    text = ''
+    for c in s:
+        text += alpha[(alpha.index(c) + n) % len(alpha)]
+    print('Decoded text: "' + text + '"')</code></pre>
+<p>Holmes, however, doesn't know how to work with files, so you must help him! You will be given the file Mary got from Moriarty's laptop. Using the code Holmes found, write a program that takes a file as an argument, reads it, decodes it, and prints the decoded text. Even though the provided piece of code above contains the phrase "Decoded text: " and quotes, please output only the decoded text itself.</p>
+<p>If your argument <code class="language-python">--file</code> is stored in the variable <code class="language-python">args</code>, you can read the file you've passed to your script this way:</p>
+<pre><code class="language-python">filename = args.file
+opened_file = open(filename)
+encoded_text = opened_file.read()  # read the file into a string
+opened_file.close()  # always close the files you've opened
+</code></pre>
+<p><button class="btn-sm btn-outline-secondary" onclick="getElementById('hint-2109').style.display='inline'">
+        Hint
+      </button>
+</p><div id="hint-2109" style="display:none;">
+<p>This is a tricky task, so let's go through it step by step:</p>
+<ul>
+<li>most of the code is already written for you. Use what's in the snippets, and add some lines to be able to run it in the command line (to get the arguments, parse them and output the result),</li>
+<li>remember that <code class="language-python">n</code> should be -13,</li>
+<li>insert the decoded text without quotes.</li>
+</ul>
+<p></p></div> </body></html><br>

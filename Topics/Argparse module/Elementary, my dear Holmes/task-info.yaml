@@ -1,0 +1,16 @@
+type: dataset
+custom_name: "Elementary, my dear Holmes!"
+files:
+- name: main.py
+  visible: true
+  text: "#  write your code here \n\n"
+  learner_created: false
+- name: data/dataset/input.txt
+  visible: true
+  learner_created: true
+feedback_link: https://hyperskill.org/learn/step/12494#comment
+status: Unchecked
+feedback:
+  message: Failed to get output of executed task
+  time: "Mon, 12 Dec 2022 20:11:56 UTC"
+record: -1

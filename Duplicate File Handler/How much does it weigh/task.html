@@ -1,0 +1,64 @@
+<h5 id="description">Description</h5>
+<p>In this stage, we start by identifying files of the same size in bytes. The <code class="java">os.path</code> module allows you to get access to file extension and size. The <a href="https://docs.python.org/3/library/os.path.html#module-os.path" rel="noopener noreferrer nofollow" target="_blank">Official Documentation</a> can help you with that.</p>
+<p>Of course, we cannot be absolutely sure that files of the same size and format are duplicates. This will help us, however, narrow down the search. It is also important to keep track of the scanned files. Add an ability to search for files of a specific file format and then sort the found files by size.</p>
+<p><button class="btn-sm btn-outline-secondary" onclick="getElementById('hint-664').style.display='inline'">
+        Hint
+      </button>
+</p><div id="hint-664" style="display:none;">Use dictionaries with size as keys and a list of full paths as each key's value.</div>
+<h5 id="objectives">Objectives</h5>
+<p>Keep the functionality from the previous stage. To complete this stage, your program should:</p>
+<ol>
+<li>Accept a command-line argument that is a root directory with files and folders. Print <code class="java">Directory is not specified</code> if there is no command-line argument;</li>
+<li>Read user input that specifies the file format (see examples). Empty input should match any file format;</li>
+<li>Print a menu with two sorting options: <code class="java">Descending</code> and <code class="java">Ascending</code>. They both represent the respective order by size of groups of files. Read the input. Print <code class="java">Wrong option</code> if any other input is entered. Repeat until a correct input is provided;</li>
+<li>Iterate over folders and print the information about files of the same size: their size, path, and names.</li>
+</ol>
+<p>Please note: you should use full path to file <strong>from root directory</strong> when printing or reading.</p>
+<h5 id="examples">Examples</h5>
+<p>The greater-than symbol followed by a space (<code class="java">&gt; </code>) represents the user input. Note that it's not part of the input.</p>
+<p><strong>Example 1:</strong></p>
+<p>Suppose, you have the following set of files and folders:</p>
+<pre><code class="language-no-highlight">+---[root_folder]
+    +---gordon_ramsay_chicken_breast.avi /4590560 bytes
+    +---[audio]
+    |   |
+    |   +---voice.mp3 /2319746 bytes
+    |   +---sia_snowman.mp3 /4590560 bytes
+    |   +---nea_some_say.mp3 /3232056 bytes
+    |   +---[classic]
+    |   |   |
+    |   |   +---unknown.mp3 /3422208 bytes
+    |   |   +---vivaldi_four_seasons_winter.mp3 /9158144 bytes
+    |   |   +---chopin_waltz7_op64_no2.mp3 /9765504 bytes
+    |   +---[rock]
+    |       |
+    |       +---smells_like_teen_spirit.mp3 /4590560 bytes
+    |       +---numb.mp3 /5786312 bytes
+    +---[masterpiece]
+        |
+        +---rick_astley_never_gonna_give_you_up.mp3 /3422208 bytes</code></pre>
+<p>Program output:</p>
+<pre><code class="language-no-highlight">&gt; python handler.py root_folder
+
+Enter file format:
+&gt;mp3
+
+Size sorting options:
+1. Descending
+2. Ascending
+
+Enter a sorting option:
+&gt; 3
+
+Wrong option
+
+Enter a sorting option:
+&gt; 2
+
+3422208 bytes
+root_folder/audio/classic/unknown.mp3
+root_folder/masterpiece/rick_astley_never_gonna_give_you_up.mp3
+
+4590560 bytes
+root_folder/audio/rock/smells_like_teen_spirit.mp3
+root_folder/audio/sia_snowman.mp3</code></pre>

@@ -1,0 +1,149 @@
+type: edu
+custom_name: How much does it weigh?
+files:
+- name: handler.py
+  visible: true
+  text: |
+    # write your code here
+  learner_created: false
+- name: test/__init__.py
+  visible: false
+  learner_created: false
+- name: test/tests.py
+  visible: false
+  text: "from hstest.stage_test import StageTest\nfrom hstest.check_result import\
+    \ CheckResult\nfrom hstest import dynamic_test, TestedProgram\nimport os\nimport\
+    \ shutil\n\n# dict for creating files\nfiles = {\n    'info.txt': {'path': ['root_folder'],\n\
+    \                 'content': 'eed110d0dbd1d89d1ffea807d1d88679_1'},\n    'lost.json':\
+    \ {'path': ['root_folder'],\n                  'content': '3a70ac2ebacf4174aa11dfbd1af835bd_1'},\n\
+    \    'phones.csv': {'path': ['root_folder'],\n                   'content': '671ab9fbf94dc377568fb7b2928960c9_1'},\n\
+    \    'python.txt': {'path': ['root_folder'],\n                   'content': 'd2c2ee4cbb368731f1a5399015160d7d_1'},\n\
+    \    'bikeshare.csv': {'path': ['root_folder', 'calc'],\n                    \
+    \  'content': 'c03285172453d7278a85a5db4d06423c_1'},\n    'server.php': {'path':\
+    \ ['root_folder', 'calc'],\n                   'content': 'a5c662fe853b7ab48d68532791a86367'},\n\
+    \    'db_cities.js': {'path': ['root_folder', 'files'],\n                    \
+    \ 'content': 'f2e5cf58ae9b2d2fd0ae9bf8fa1774da'},\n    'some_text.txt': {'path':\
+    \ ['root_folder', 'files'],\n                      'content': 'd2c2ee4cbb368731f1a5399015160d7d'},\n\
+    \    'cars.json': {'path': ['root_folder', 'files', 'stage'],\n              \
+    \    'content': '3a70ac2ebacf4174aa11dfbd1af835bd'},\n    'package-lock.json':\
+    \ {'path': ['root_folder', 'files', 'stage'],\n                          'content':\
+    \ 'eebf1c62a13284ea1bcfe53820e83f11'},\n    'index.js': {'path': ['root_folder',\
+    \ 'files', 'stage', 'src'],\n                 'content': '797ac79aa6a3c2ef733fecbaff5a655f'},\n\
+    \    'libs.txt': {'path': ['root_folder', 'files', 'stage', 'src'],\n        \
+    \         'content': '4909fd0404ac7ebe1fb0c50447975a2a'},\n    'reviewslider.js':\
+    \ {'path': ['root_folder', 'files', 'stage', 'src'],\n                       \
+    \ 'content': 'abc96a9b62c4701f27cf7c8dbd484fdc'},\n    'spoiler.js': {'path':\
+    \ ['root_folder', 'files', 'stage', 'src'],\n                   'content': 'b614ccac263d3d78b60b37bf35e860f3'},\n\
+    \    'src.txt': {'path': ['root_folder', 'files', 'stage', 'src'],\n         \
+    \       'content': 'eed110d0dbd1d89d1ffea807d1d88679_1'},\n    'toggleminimenu.js':\
+    \ {'path': ['root_folder', 'files', 'stage', 'src'],\n                       \
+    \   'content': '7eceb7dd5a0daaccc32739e1dcc6c3b0_1'},\n    'extraversion.csv':\
+    \ {'path': ['root_folder', 'project'],\n                         'content': 'fc88cf4d79437fa06e6cfdd80bd0eed2_1'},\n\
+    \    'index.html': {'path': ['root_folder', 'project'],\n                   'content':\
+    \ '3f0f7b61205b863d2051845037541835_1'},\n    'python_copy.txt': {'path': ['root_folder',\
+    \ 'project'],\n                        'content': 'd2c2ee4cbb368731f1a5399015160d7d_1'}\n\
+    }\n\nroot_dir_path = os.path.join('module', 'root_folder')\n\n\ndef create_files(path):\n\
+    \    # delete all root_folder\n    if os.path.isdir(path):\n        shutil.rmtree(path)\n\
+    \n    # create files\n    for key, dict_val in files.items():\n        path =\
+    \ os.path.join('module', *dict_val['path'])\n        if not os.path.isdir(path):\n\
+    \            os.makedirs(path)\n        file_path = os.path.join(path, key)\n\
+    \        with open(file_path, 'a+') as f:\n            f.write(dict_val['content'])\n\
+    \n\n# Tests\nclass DuplicateFileHandlerCheck(StageTest):\n    @dynamic_test()\n\
+    \    def check_empty_arg(self):\n        main = TestedProgram()\n        output\
+    \ = main.start().lower()\n        if 'not' in output and 'specified' in output:\n\
+    \            return CheckResult.correct()\n        return CheckResult.wrong(\"\
+    You should check command line argument\")\n\n    @dynamic_test()\n    def check_format_choice(self):\n\
+    \        main = TestedProgram()\n        output = main.start(root_dir_path).lower()\n\
+    \        if 'format' in output:\n            return CheckResult.correct()\n  \
+    \      return CheckResult.wrong(\"You should read the user's choice of file format\"\
+    )\n\n    @dynamic_test()\n    def check_sorting_choice(self):\n        main =\
+    \ TestedProgram()\n        main.start(root_dir_path).lower()\n        output =\
+    \ main.execute(\"csv\").lower()\n        if 'sort' in output and 'desc' in output\
+    \ and 'asc' in output and 'option' in output:\n            output = main.execute(\"\
+    3\").lower()\n            if 'wrong' in output:\n                return CheckResult.correct()\n\
+    \            return CheckResult.wrong(\"You should read and check the user's choice\
+    \ of sorting option\")\n        return CheckResult.wrong(\"You should print out\
+    \ sorting options and add input prompt message\")\n\n    @dynamic_test()\n   \
+    \ def check_path(self):\n        main = TestedProgram()\n        main.start(root_dir_path).lower()\n\
+    \        main.execute(\"\").lower()\n        output = main.execute(\"2\").lower().split('\\\
+    n')\n        for val in output:\n            if '.' in val:\n                if\
+    \ not os.path.exists(val):\n                    return CheckResult.wrong(f\"{val}\
+    \ path does not exist\")\n        return CheckResult.correct()\n\n    @dynamic_test()\n\
+    \    def check_group_first_line(self):\n        main = TestedProgram()\n     \
+    \   main.start(root_dir_path).lower()\n        main.execute(\"\").lower()\n  \
+    \      output = main.execute(\"2\").lower().split('\\n')\n        output = [val\
+    \ for val in output if val]\n\n        if not output:\n            return CheckResult.wrong(\"\
+    After choosing ascending sorting order your output is empty!\")\n\n        if\
+    \ 'byte' in output[0]:\n            return CheckResult.correct()\n        return\
+    \ CheckResult.wrong(f\"The first line of group of files should contain files size\"\
+    )\n\n    @dynamic_test()\n    def check_group_size(self):\n        main = TestedProgram()\n\
+    \        main.start(root_dir_path).lower()\n        main.execute(\"\").lower()\n\
+    \        output = main.execute(\"2\").lower().split('\\n')\n        output = [val\
+    \ for val in output if val]\n\n        for val in output:\n            if 'byte'\
+    \ in val and not any(i.isdigit() for i in val.split()):\n                return\
+    \ CheckResult.wrong(f\"There is no size in the line: {val}\")\n\n        return\
+    \ CheckResult.correct()\n\n    @dynamic_test()\n    def check_size(self):\n  \
+    \      main = TestedProgram()\n        main.start(root_dir_path).lower()\n   \
+    \     main.execute(\"\").lower()\n        output = main.execute(\"2\").lower().split('\\\
+    n')\n        output = [val for val in output if val]\n        size = None\n\n\
+    \        for val in output:\n            if 'byte' in val:\n                for\
+    \ i in val.split():\n                    if i.isdigit():\n                   \
+    \     size = int(i)\n            elif val and 'check' not in val:\n          \
+    \      if not os.path.exists(val):\n                    return CheckResult.wrong('Looks\
+    \ like you printed a file name that doesn\\'t exist!')\n                file_size\
+    \ = os.path.getsize(val)\n                if size != file_size:\n            \
+    \        return CheckResult.wrong(f\"{val} has wrong size group\")\n        return\
+    \ CheckResult.correct()\n\n    @dynamic_test()\n    def check_order_asc(self):\n\
+    \        main = TestedProgram()\n        main.start(root_dir_path).lower()\n \
+    \       main.execute(\"\").lower()\n        output = main.execute(\"2\").lower().split('\\\
+    n')\n        sizes = []\n        size = None\n\n        for val in output:\n \
+    \           if 'byte' in val:\n                for i in val.split():\n       \
+    \             if i.isdigit():\n                        size = int(i)\n\n     \
+    \           sizes.append(size)\n\n        if len(sizes) != 2:\n            return\
+    \ CheckResult.wrong(f\"Wrong number of groups of files\")\n        if sizes[0]\
+    \ == 32 and sizes[1] == 34:\n            return CheckResult.correct()\n      \
+    \  return CheckResult.wrong(f\"Wrong sorting order of files\")\n\n    @dynamic_test()\n\
+    \    def check_order_desc(self):\n        main = TestedProgram()\n        main.start(root_dir_path).lower()\n\
+    \        main.execute(\"\").lower()\n        output = main.execute(\"1\").lower().split('\\\
+    n')\n        sizes = []\n        size = None\n\n        for val in output:\n \
+    \           if 'byte' in val:\n                for i in val.split():\n       \
+    \             if i.isdigit():\n                        size = int(i)\n\n     \
+    \           sizes.append(size)\n\n        if len(sizes) != 2:\n            return\
+    \ CheckResult.wrong(f\"Wrong number of groups of files\")\n        if sizes[1]\
+    \ == 32 and sizes[0] == 34:\n            return CheckResult.correct()\n      \
+    \  return CheckResult.wrong(f\"Wrong sorting order of files\")\n\n    @dynamic_test()\n\
+    \    def check_num(self):\n        main = TestedProgram()\n        main.start(root_dir_path).lower()\n\
+    \        main.execute(\"\").lower()\n        output = main.execute(\"2\").lower().split('\\\
+    n')\n        num_files = []\n        n = 0\n\n        for val in output:\n   \
+    \         if val and 'check' not in val:\n                if 'byte' in val:\n\
+    \                    num_files.append(n)\n                    n = 0\n        \
+    \        else:\n                    n += 1\n        num_files.append(n)\n\n  \
+    \      if num_files[1] != 9:\n            return CheckResult.wrong(f\"\"\"Output\
+    \ contains wrong number of files with a size of 32 bytes. \n                 \
+    \                        Number of files in output: {num_files[1]}\"\"\")\n\n\
+    \        if num_files[2] != 10:\n            return CheckResult.wrong(f\"\"\"\
+    Output contains wrong number of files with a size of 34 bytes. \n            \
+    \                             Number of files in output: {num_files[2]}\"\"\"\
+    )\n\n        return CheckResult.correct()\n\n    @dynamic_test()\n    def check_format(self):\n\
+    \        main = TestedProgram()\n        main.start(root_dir_path).lower()\n \
+    \       main.execute(\"csv\").lower()\n        output = main.execute(\"2\").lower().split('\\\
+    n')\n\n        for val in output:\n            if '.' in val and 'csv' not in\
+    \ val:\n                return CheckResult.wrong(f\"Wrong file format in {val}\"\
+    )\n\n        return CheckResult.correct()\n\n    def after_all_tests(self):\n\
+    \        try:\n            if os.path.isdir(root_dir_path):\n                shutil.rmtree(root_dir_path)\n\
+    \        except Exception as ignored:\n            pass\n\n    def generate(self):\n\
+    \        try:\n            create_files(root_dir_path)\n        except Exception\
+    \ as ignored:\n            pass\n        return []\n\n\nif __name__ == '__main__':\n\
+    \    DuplicateFileHandlerCheck().run_tests()\n"
+  learner_created: false
+- name: tests.py
+  visible: false
+  text: |
+    from test.tests import DuplicateFileHandlerCheck
+
+    if __name__ == '__main__':
+        DuplicateFileHandlerCheck().run_tests()
+  learner_created: false
+feedback_link: https://hyperskill.org/projects/176/stages/906/implement#comment
+status: Unchecked
+record: -1
