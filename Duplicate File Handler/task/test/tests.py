@@ -3,25 +3,26 @@ from hstest.check_result import CheckResult
 from hstest import dynamic_test, TestedProgram
 import os
 import shutil
+import hashlib
 
 # dict for creating files
 files = {
     'info.txt': {'path': ['root_folder'],
-                 'content': 'eed110d0dbd1d89d1ffea807d1d88679'},
+                 'content': 'd2c2ee4cbb368731f1a5399015160d7d_23'},
     'lost.json': {'path': ['root_folder'],
                   'content': '3a70ac2ebacf4174aa11dfbd1af835bd'},
     'phones.csv': {'path': ['root_folder'],
                    'content': '671ab9fbf94dc377568fb7b2928960c9'},
     'python.txt': {'path': ['root_folder'],
-                   'content': 'd2c2ee4cbb368731f1a5399015160d7d'},
+                   'content': 'd2c2ee4cbb368731f1a5399015160d7d_1'},
     'bikeshare.csv': {'path': ['root_folder', 'calc'],
-                      'content': 'c03285172453d7278a85a5db4d06423c'},
+                      'content': '671ab9fbf94dc377568fb7b2928960c9'},
     'server.php': {'path': ['root_folder', 'calc'],
                    'content': 'a5c662fe853b7ab48d68532791a86367'},
     'db_cities.js': {'path': ['root_folder', 'files'],
                      'content': 'f2e5cf58ae9b2d2fd0ae9bf8fa1774da'},
     'some_text.txt': {'path': ['root_folder', 'files'],
-                      'content': 'd2c2ee4cbb368731f1a5399015160d7d'},
+                      'content': 'd2c2ee4cbb368731f1a5399015160d7d_23'},
     'cars.json': {'path': ['root_folder', 'files', 'stage'],
                   'content': '3a70ac2ebacf4174aa11dfbd1af835bd'},
     'package-lock.json': {'path': ['root_folder', 'files', 'stage'],
@@ -35,55 +36,18 @@ files = {
     'spoiler.js': {'path': ['root_folder', 'files', 'stage', 'src'],
                    'content': 'b614ccac263d3d78b60b37bf35e860f3'},
     'src.txt': {'path': ['root_folder', 'files', 'stage', 'src'],
-                'content': 'eed110d0dbd1d89d1ffea807d1d88679'},
+                'content': 'eed110d0dbd1d89d1ffea807d1d88679_1'},
     'toggleminimenu.js': {'path': ['root_folder', 'files', 'stage', 'src'],
-                          'content': '7eceb7dd5a0daaccc32739e1dcc6c3b0'},
+                          'content': '7eceb7dd5a0daaccc32739e1dcc6c3b0_1'},
     'extraversion.csv': {'path': ['root_folder', 'project'],
-                         'content': 'fc88cf4d79437fa06e6cfdd80bd0eed2'},
+                         'content': 'fc88cf4d79437fa06e6cfdd80bd0eed2_1'},
     'index.html': {'path': ['root_folder', 'project'],
-                   'content': '3f0f7b61205b863d2051845037541835'},
+                   'content': '3f0f7b61205b863d2051845037541835_1'},
     'python_copy.txt': {'path': ['root_folder', 'project'],
-                        'content': 'd2c2ee4cbb368731f1a5399015160d7d'}
+                        'content': 'd2c2ee4cbb368731f1a5399015160d7d_1'}
 }
 
-# arrs for checking results
-root_dir = [
-    'info.txt',
-    'lost.json',
-    'phones.csv',
-    'python.txt',
-    'bikeshare.csv',
-    'server.php',
-    'db_cities.js',
-    'some_text.txt',
-    'cars.json',
-    'package-lock.json',
-    'index.js',
-    'libs.txt',
-    'reviewslider.js',
-    'spoiler.js',
-    'src.txt',
-    'toggleminimenu.js',
-    'extraversion.csv',
-    'index.html',
-    'python_copy.txt'
-]
-
-files_dir = [
-    'db_cities.js',
-    'some_text.txt',
-    'cars.json',
-    'package-lock.json',
-    'index.js',
-    'libs.txt',
-    'reviewslider.js',
-    'spoiler.js',
-    'src.txt',
-    'toggleminimenu.js'
-]
-
 root_dir_path = os.path.join('module', 'root_folder')
-files_dir_path = os.path.join('module', 'root_folder', 'files')
 
 
 def create_files(path):
@@ -101,8 +65,8 @@ def create_files(path):
             f.write(dict_val['content'])
 
 
+# Tests
 class DuplicateFileHandlerCheck(StageTest):
-
     @dynamic_test()
     def check_empty_arg(self):
         main = TestedProgram()
@@ -112,35 +76,370 @@ class DuplicateFileHandlerCheck(StageTest):
         return CheckResult.wrong("You should check command line argument")
 
     @dynamic_test()
-    def check_root_folder(self):
+    def check_format_choice(self):
         main = TestedProgram()
-        output = main.start(root_dir_path).split('\n')
-        output = [val for val in output if val]
-        if len(output) > 19:
-            print(output)
-            return CheckResult.wrong(f"Output contains extra files. Number of files in your output is {len(output)}")
-        if len(output) < 19:
-            return CheckResult.wrong(f"Some files are missing. Number of files in your output is {len(output)}")
-        for path in output:
-            file = path.replace('/', '\\').split('\\')[-1]
-            if file not in files:
-                return CheckResult.wrong(f"Output contains wrong files: {file}")
+        output = main.start(root_dir_path).lower()
+        if 'format' in output:
+            return CheckResult.correct()
+        return CheckResult.wrong("You should read the user's choice of file format")
+
+    @dynamic_test()
+    def check_sorting_choice(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("csv").lower()
+        if 'sort' in output and 'desc' in output and 'asc' in output and 'option' in output:
+            output = main.execute("3").lower()
+            if 'wrong' in output:
+                return CheckResult.correct()
+            return CheckResult.wrong("You should read and check the user's choice of sorting option")
+        return CheckResult.wrong("You should print out sorting options and add input prompt message")
+
+    @dynamic_test()
+    def check_path(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("2").lower().split('\n')
+        for val in output:
+            if '.' in val:
+                if not os.path.exists(val):
+                    return CheckResult.wrong(f"{val} path does not exist")
         return CheckResult.correct()
 
     @dynamic_test()
-    def check_root_folder(self):
+    def check_group_first_line(self):
         main = TestedProgram()
-        output = main.start(files_dir_path).split('\n')
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("2").lower().split('\n')
         output = [val for val in output if val]
-        if len(output) > 10:
-            print(output)
-            return CheckResult.wrong(f"Output contains extra files. Number of files in your output is {len(output)}")
-        if len(output) < 10:
-            return CheckResult.wrong(f"Some files are missing. Number of files in your output is {len(output)}")
-        for path in output:
-            file = path.replace('/', '\\').split('\\')[-1]
-            if file not in files_dir:
-                return CheckResult.wrong(f"Output contains wrong files: {file}")
+
+        if not output:
+            return CheckResult.wrong("After choosing ascending sorting order your output is empty!")
+
+        if 'byte' in output[0]:
+            return CheckResult.correct()
+        return CheckResult.wrong(f"The first line of group of files should start with files size")
+
+    @dynamic_test()
+    def check_group_size(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("2").lower().split('\n')
+        output = [val for val in output if val]
+
+        for val in output:
+            if 'byte' in val and not any(i.isdigit() for i in val.split()):
+                return CheckResult.wrong(f"There is no size in the line: {val}")
+
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_size(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("2").lower().split('\n')
+        output = [val for val in output if val]
+        size = None
+
+        for val in output:
+            if 'byte' in val:
+                for i in val.split():
+                    if i.isdigit():
+                        size = int(i)
+            elif val and 'check' not in val:
+                if not os.path.exists(val):
+                    return CheckResult.wrong('Looks like you printed a file name that doesn\'t exist!')
+                file_size = os.path.getsize(val)
+                if size != file_size:
+                    return CheckResult.wrong(f"{val} has wrong size group")
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_order_asc(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("2").lower().split('\n')
+        sizes = []
+        size = None
+
+        for val in output:
+            if 'byte' in val:
+                for i in val.split():
+                    if i.isdigit():
+                        size = int(i)
+
+                sizes.append(size)
+
+        if len(sizes) != 3:
+            return CheckResult.wrong(f"Wrong number of groups of files")
+        if sizes[0] == 32 and sizes[1] == 34 and sizes[2] == 35:
+            return CheckResult.correct()
+        return CheckResult.wrong(f"Wrong sorting order of files")
+
+    @dynamic_test()
+    def check_order_desc(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("1").lower().split('\n')
+        sizes = []
+        size = None
+
+        for val in output:
+            if 'byte' in val:
+                for i in val.split():
+                    if i.isdigit():
+                        size = int(i)
+
+                sizes.append(size)
+
+        if len(sizes) != 3:
+            return CheckResult.wrong(f"Wrong number of groups of files")
+        if sizes[2] == 32 and sizes[1] == 34 and sizes[0] == 35:
+            return CheckResult.correct()
+        return CheckResult.wrong(f"Wrong sorting order of files")
+
+    @dynamic_test()
+    def check_num(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("2").lower().split('\n')
+        num_files = []
+        sizes = []
+        n = 0
+
+        for val in output:
+            if val and 'check' not in val:
+                if 'byte' in val:
+                    num_files.append(n)
+                    n = 0
+                else:
+                    n += 1
+        num_files.append(n)
+
+        if num_files[1] != 11:
+            return CheckResult.wrong(f"""Output contains wrong number of files with a size of 32 bytes. 
+                                         Number of files in output: {num_files[1]}""")
+
+        if num_files[2] != 6:
+            return CheckResult.wrong(f"""Output contains wrong number of files with a size of 34 bytes. 
+                                         Number of files in output: {num_files[2]}""")
+
+        if num_files[3] != 2:
+            return CheckResult.wrong(f"""Output contains wrong number of files with a size of 35 bytes. 
+                                         Number of files in output: {num_files[-1]}""")
+
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_format(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("csv").lower()
+        output = main.execute("2").lower().split('\n')
+
+        for val in output:
+            if '.' in val and 'csv' not in val:
+                return CheckResult.wrong(f"Wrong file format in {val}")
+
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_duplicate_first_line(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("2").lower()
+        output = main.execute("yes").lower().split('\n')
+        output = [val for val in output if val]
+
+        if not output:
+            return CheckResult.wrong("Looks like your output is empty after entering 'Yes'")
+
+        if 'byte' not in output[0]:
+            return CheckResult.wrong(f"The first line of group of files should contain files size")
+        if 'hash' not in output[1]:
+            return CheckResult.wrong(f"The second line of group of files should contain hash value")
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_duplicate_group_size(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("2").lower()
+        output = main.execute("yes").lower().split('\n')
+        output = [val for val in output if val]
+
+        for val in output:
+            if 'byte' in val and not any(i.isdigit() for i in val.split()):
+                return CheckResult.wrong(f"There is no size in the line: {val}")
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_size_duplicate(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("2").lower()
+        output = main.execute("yes").lower().split('\n')
+        output = [val for val in output if val]
+        size = None
+
+        for val in output:
+            if 'byte' in val:
+                for i in val.split():
+                    if i.isdigit():
+                        size = int(i)
+            elif 'delete' not in val and os.sep in val:
+                temp = val.split()
+                if len(temp) < 2:
+                    return CheckResult.wrong("Your output is incorrect! "
+                                             "Make sure that the file paths are printed as in the examples")
+                path = ' '.join(temp[1:])
+                try:
+                    file_size = os.path.getsize(path)
+                except Exception:
+                    return CheckResult.wrong(f"Your output contains invalid file path:\n"
+                                             f"{val}")
+                if size != file_size:
+                    return CheckResult.wrong(f"{val} has wrong size group")
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_duplicate_order_asc(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("2").lower()
+        output = main.execute("yes").lower().split('\n')
+
+        sizes = []
+        for val in output:
+            if 'byte' in val:
+                for i in val.split():
+                    if i.isdigit():
+                        sizes.append(int(i))
+
+        if len(sizes) != 3:
+            return CheckResult.wrong(f"Wrong number of groups of files")
+        if sizes[0] == 32 and sizes[1] == 34 and sizes[2] == 35:
+            return CheckResult.correct()
+        return CheckResult.wrong(f"Wrong sorting order of files")
+
+    @dynamic_test()
+    def check_duplicate_order_desc(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("1").lower()
+        output = main.execute("yes").lower().split('\n')
+
+        sizes = []
+        for val in output:
+            if 'byte' in val:
+                for i in val.split():
+                    if i.isdigit():
+                        sizes.append(int(i))
+
+        if len(sizes) != 3:
+            return CheckResult.wrong(f"Wrong number of groups of files")
+        if sizes[2] == 32 and sizes[1] == 34 and sizes[0] == 35:
+            return CheckResult.correct()
+        return CheckResult.wrong(f"Wrong sorting order of files")
+
+    @dynamic_test()
+    def check_duplicate_enum(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("1").lower()
+        output = main.execute("yes").lower().split('\n')
+
+        n = 1
+        for val in output:
+            if '.' in val:
+                if val.split('.')[0] != str(n):
+                    return CheckResult.wrong(f"Wrong file numbering. File: {val} ")
+                n += 1
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_duplicate_hash(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("1").lower()
+        output = main.execute("yes").lower().split('\n')
+
+        hash_user = None
+        for val in output:
+            if 'hash' in val:
+                temp = val.split()
+                if len(temp) != 2:
+                    return CheckResult.wrong(f"The following line has wrong output format:\n{val}\n"
+                                             f"Make sure you output it like in examples!")
+                hash_user = temp[1]
+            elif '.' in val:
+                temp = val.split()
+                if len(temp) < 2:
+                    return CheckResult.wrong("Your output is incorrect! "
+                                             "Make sure that the file paths are printed as in the examples")
+                path = ' '.join(temp[1:])
+                try:
+                    with open(path, 'rb') as f:
+                        hasher = hashlib.md5()
+                        hasher.update(f.read())
+                        hash_val = hasher.hexdigest()
+                    if hash_user != hash_val:
+                        return CheckResult.wrong(f"Wrong file hash. File: {val}, hash: {hash_user} ")
+                except FileNotFoundError:
+                    return CheckResult.wrong(f"Incorrect file paths. "
+                                             f"Make sure that the file paths are printed as in the examples.")
+
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_duplicate(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("1").lower()
+        output = main.execute("yes").lower().split('\n')
+
+        hash_arr = ['95708df6eb2d9e30c128cf14dcf91f5b',
+                    'c2a5ad1655d8d46d7d699594c1ee0dec',
+                    'a5ceea9b58986bc87fb85f999d76d9db',
+                    'd63a4f1856c5fa167b1aaa6529d9846f']
+
+        n = 0
+        for val in output:
+            if 'hash' in val:
+                n += 1
+                string, hash_user = val.split()
+                if hash_user not in hash_arr:
+                    return CheckResult.wrong(f"There is no duplicate with hash {hash_user}")
+        if n < 4:
+            return CheckResult.wrong(f"You have missed some files")
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_duplicate_txt(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("txt").lower()
+        output = main.execute("1").lower()
+        output = main.execute("yes").lower().split('\n')
+
+        for val in output:
+            if '.' in val and 'txt' not in val:
+                return CheckResult.wrong(f"Wrong file format in {val}")
         return CheckResult.correct()
 
     def after_all_tests(self):

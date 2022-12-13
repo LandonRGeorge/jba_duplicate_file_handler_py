@@ -144,6 +144,9 @@ files:
     if __name__ == '__main__':
         DuplicateFileHandlerCheck().run_tests()
   learner_created: false
-feedback_link: https://hyperskill.org/projects/176/stages/906/implement#comment
-status: Unchecked
-record: -1
+feedback_link: https://hyperskill.org/learn/step/12945#comment
+status: Solved
+feedback:
+  message: Congratulations!
+  time: "Mon, 12 Dec 2022 22:16:43 UTC"
+record: 2

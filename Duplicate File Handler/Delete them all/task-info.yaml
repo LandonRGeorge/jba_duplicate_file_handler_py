@@ -286,6 +286,6 @@ files:
     if __name__ == '__main__':
         DuplicateFileHandlerCheck().run_tests()
   learner_created: false
-feedback_link: https://hyperskill.org/projects/176/stages/908/implement#comment
+feedback_link: https://hyperskill.org/learn/step/12947#comment
 status: Unchecked
 record: -1
