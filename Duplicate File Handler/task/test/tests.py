@@ -120,7 +120,7 @@ class DuplicateFileHandlerCheck(StageTest):
 
         if 'byte' in output[0]:
             return CheckResult.correct()
-        return CheckResult.wrong(f"The first line of group of files should start with files size")
+        return CheckResult.wrong(f"The first line of group of files should contain files size")
 
     @dynamic_test()
     def check_group_size(self):
@@ -223,6 +223,7 @@ class DuplicateFileHandlerCheck(StageTest):
                     n += 1
         num_files.append(n)
 
+        num_files.append(n)
         if num_files[1] != 11:
             return CheckResult.wrong(f"""Output contains wrong number of files with a size of 32 bytes. 
                                          Number of files in output: {num_files[1]}""")
@@ -231,7 +232,7 @@ class DuplicateFileHandlerCheck(StageTest):
             return CheckResult.wrong(f"""Output contains wrong number of files with a size of 34 bytes. 
                                          Number of files in output: {num_files[2]}""")
 
-        if num_files[3] != 2:
+        if num_files[-1] != 2:
             return CheckResult.wrong(f"""Output contains wrong number of files with a size of 35 bytes. 
                                          Number of files in output: {num_files[-1]}""")
 
@@ -262,9 +263,9 @@ class DuplicateFileHandlerCheck(StageTest):
         if not output:
             return CheckResult.wrong("Looks like your output is empty after entering 'Yes'")
 
-        if 'byte' not in output[0]:
+        if len(output) < 1 or 'byte' not in output[0]:
             return CheckResult.wrong(f"The first line of group of files should contain files size")
-        if 'hash' not in output[1]:
+        if len(output) < 2 or 'hash' not in output[1]:
             return CheckResult.wrong(f"The second line of group of files should contain hash value")
         return CheckResult.correct()
 
@@ -441,6 +442,88 @@ class DuplicateFileHandlerCheck(StageTest):
             if '.' in val and 'txt' not in val:
                 return CheckResult.wrong(f"Wrong file format in {val}")
         return CheckResult.correct()
+
+    @dynamic_test()
+    def check_del_choice_space(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("1").lower()
+        output = main.execute("yes").lower()
+        output = main.execute("yes").lower()
+        output = main.execute("").lower()
+
+        if 'wrong' in output:
+            return CheckResult.correct()
+        return CheckResult.wrong(f"You should check an empty string of files to delete")
+
+    @dynamic_test()
+    def check_del_choice_mix(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("1").lower()
+        output = main.execute("yes").lower()
+        output = main.execute("yes").lower()
+        output = main.execute("one 2 3.5").lower()
+
+        if 'wrong' in output:
+            return CheckResult.correct()
+        return CheckResult.wrong(f"You should check an input")
+
+    @dynamic_test()
+    def check_deleting(self):
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("1").lower()
+        output = main.execute("yes").lower().split('\n')
+
+        del_choice = "1 2 5 3"
+        del_arr = []
+
+        for val in output:
+            if '.' in val and val.split()[0][0] in del_choice:
+                string, path = val.split(' ', 1)
+                del_arr.append(path)
+
+        output = main.execute("yes").lower()
+        output = main.execute(del_choice).lower()
+
+        for path in del_arr:
+            if os.path.exists(path):
+                return CheckResult.wrong(f"Some files still exist")
+        return CheckResult.correct()
+
+    @dynamic_test()
+    def check_free_space(self):
+        create_files(root_dir_path)
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("").lower()
+        output = main.execute("1").lower()
+        output = main.execute("yes").lower()
+        output = main.execute("yes").lower()
+        output = main.execute("1 2 5 3").lower()
+
+        if '136' in output:
+            return CheckResult.correct()
+        return CheckResult.wrong(f"Wrong size of freed space")
+
+    @dynamic_test()
+    def check_free_space(self):
+        create_files(root_dir_path)
+        main = TestedProgram()
+        output = main.start(root_dir_path).lower()
+        output = main.execute("txt").lower()
+        output = main.execute("1").lower()
+        output = main.execute("yes").lower()
+        output = main.execute("yes").lower()
+        output = main.execute("1 4 3").lower()
+
+        if '103' in output:
+            return CheckResult.correct()
+        return CheckResult.wrong(f"Wrong size of freed space")
 
     def after_all_tests(self):
         try:
